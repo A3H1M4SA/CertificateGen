@@ -30,9 +30,15 @@ $cert_name = isset($_GET["certname"]) ? $_GET["certname"] : "Default Certificate
 
 
 // Path to the certificate template and font
-$imagePath = 'assets/certificate_of_appreciation/appreciation_1.png'; // Make sure this path is correct
-$fontPath = 'fonts/ArianaVioleta.ttf'; // Make sure this path is correct and the file is readable
-$signedByFontPath = 'fonts/signedByFont.ttf'; // Path to the font for 'Signed By'
+$query = "SELECT * FROM `certificate_db` WHERE certificate_name='$cert_name'";
+$query_run = mysqli_query($link, $query);
+while ($rows = mysqli_fetch_array($query_run)) 
+{
+    $imagePath = $rows['certificate_path'].'.png'; // Make sure this path is correct
+    $fontPath = 'fonts/AbrilFatface.ttf'; // Make sure this path is correct and the file is readable
+    $signedByFontPath = 'fonts/signedByFont.ttf'; // Path to the font for 'Signed By
+}
+
 
 
 // Check if the image file exists and is readable
@@ -49,36 +55,48 @@ if (!$image) {
 $imageWidth = imagesx($image);
 $imageHeight = imagesy($image);
 
-// Define the font size
-$fontSize = 100; // Adjust the font size as needed
 
 // Set the text color (black)
 $query = "SELECT * FROM `certificate_db` WHERE certificate_name='$cert_name'";
 $query_run = mysqli_query($link, $query);
 while ($rows = mysqli_fetch_array($query_run)) 
 {
-    $textColour = imagecolorallocate($image, 160,82,45);
 
     // Gets the co-ordinates for the names from the DB
     $name_cords = explode(",", trim($rows['name_loc'], "()")) ;
-    // Name text
+    $color_rgb = explode(",", trim($rows['text_color'], "()")) ;
+    $signed_cords = explode(",", trim($rows['signedby_loc'], "()")) ;
+
+    // Set text name and color
     $nameText = $name;
+    $textColour = imagecolorallocate($image,  $color_rgb[0], $color_rgb[1], $color_rgb[2]);
+
+    // Define the font size
+    $fontSize_Name = $rows['name_fontsize'];
+    $fontSize_Other = $rows['other_fontsize'];
+
     // Set your desired offsets here
     $offsetX = $name_cords[0]; // Horizontal adjustment (left/right)
     $offsetY = $name_cords[1]; // Vertical adjustment (up/down)
-    $x = calculateX($fontSize, $fontPath, $nameText, $imageWidth, $offsetX);
-    $y = calculateY($fontSize, $fontPath, $nameText, $imageHeight, $offsetY);
+    $x = calculateX($fontSize_Name, $fontPath, $nameText, $imageWidth, $offsetX);
+    $y = calculateY($fontSize_Name, $fontPath, $nameText, $imageHeight, $offsetY);
 
-    imagettftext($image, $fontSize, 0, $x, $y, $textColour, $fontPath, $nameText);
+    imagettftext($image, $fontSize_Name, 0, $x, $y, $textColour, $fontPath, $nameText);
 
     // // Signed by
     $signedByFontPath = 'fonts/ArianaVioleta.ttf'; // Path to the different font for 'Signed By'
     $signedByText = $signedBy;
-    $offsetXSignedBy = 0; // Horizontal adjustment for Signed By
-    $offsetYSignedBy = 1150; // Vertical adjustment for Signed By
-    $xSignedBy = calculateX($fontSize, $signedByFontPath, $signedByText, $imageWidth, $offsetXSignedBy);
-    $ySignedBy = calculateY($fontSize, $signedByFontPath, $signedByText, $imageHeight, $offsetYSignedBy);
-    imagettftext($image, $fontSize, 0, $xSignedBy, $ySignedBy, $textColour, $signedByFontPath, $signedByText);
+    $offsetXSignedBy = $signed_cords[0]; // Horizontal adjustment for Signed By
+    $offsetYSignedBy = 950; // Vertical adjustment for Signed By
+    $xSignedBy = calculateX($fontSize_Other, $signedByFontPath, $signedByText, $imageWidth, $offsetXSignedBy);
+    $ySignedBy = calculateY($fontSize_Other, $signedByFontPath, $signedByText, $imageHeight, $offsetYSignedBy);
+    imagettftext($image, $fontSize_Other, 0, $xSignedBy, $ySignedBy, $textColour, $signedByFontPath, $signedByText);
+
+    //Update API for Certificate
+    $updatecertcount = "UPDATE certificate_db SET certificate_used=certificate_used+1 WHERE certificate_name='$cert_name'";
+    $run_1 = mysqli_query($link, $updatecertcount);
+
+
 }
 
 // // Date of Issue

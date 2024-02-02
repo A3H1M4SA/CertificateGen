@@ -35,8 +35,8 @@ $query_run = mysqli_query($link, $query);
 while ($rows = mysqli_fetch_array($query_run)) 
 {
     $imagePath = $rows['certificate_path'].'.png'; // Make sure this path is correct
-    $fontPath = 'fonts/AbrilFatface.ttf'; // Make sure this path is correct and the file is readable
-    $signedByFontPath = 'fonts/signedByFont.ttf'; // Path to the font for 'Signed By
+    $fontPath = $rows['primaryfont']; // Make sure this path is correct and the file is readable
+    $signedByFontPath = $rows['primaryfont']; // Path to the font for 'Signed By
 }
 
 
@@ -66,6 +66,7 @@ while ($rows = mysqli_fetch_array($query_run))
     $name_cords = explode(",", trim($rows['name_loc'], "()")) ;
     $color_rgb = explode(",", trim($rows['text_color'], "()")) ;
     $signed_cords = explode(",", trim($rows['signedby_loc'], "()")) ;
+    $company_cords = explode(",", trim($rows['company_loc'], "()")) ;
 
     // Set text name and color
     $nameText = $name;
@@ -83,11 +84,18 @@ while ($rows = mysqli_fetch_array($query_run))
 
     imagettftext($image, $fontSize_Name, 0, $x, $y, $textColour, $fontPath, $nameText);
 
-    // // Signed by
-    $signedByFontPath = 'fonts/ArianaVioleta.ttf'; // Path to the different font for 'Signed By'
+    // Signed by
     $signedByText = $signedBy;
     $offsetXSignedBy = $signed_cords[0]; // Horizontal adjustment for Signed By
-    $offsetYSignedBy = 950; // Vertical adjustment for Signed By
+    $offsetYSignedBy = $signed_cords[1]; // Vertical adjustment for Signed By
+    $xSignedBy = calculateX($fontSize_Other, $signedByFontPath, $signedByText, $imageWidth, $offsetXSignedBy);
+    $ySignedBy = calculateY($fontSize_Other, $signedByFontPath, $signedByText, $imageHeight, $offsetYSignedBy);
+    imagettftext($image, $fontSize_Other, 0, $xSignedBy, $ySignedBy, $textColour, $signedByFontPath, $signedByText);
+
+    // Company
+    $signedByText = $company;
+    $offsetXSignedBy = $company_cords[0]; // Horizontal adjustment for Signed By
+    $offsetYSignedBy = $company_cords[1]; // Vertical adjustment for Signed By
     $xSignedBy = calculateX($fontSize_Other, $signedByFontPath, $signedByText, $imageWidth, $offsetXSignedBy);
     $ySignedBy = calculateY($fontSize_Other, $signedByFontPath, $signedByText, $imageHeight, $offsetYSignedBy);
     imagettftext($image, $fontSize_Other, 0, $xSignedBy, $ySignedBy, $textColour, $signedByFontPath, $signedByText);

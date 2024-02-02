@@ -2,16 +2,20 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-// Function to calculate the X coordinate for center alignment
-function calculateX($fontSize, $fontPath, $text, $imageWidth) {
+function calculateX($fontSize, $fontPath, $text, $imageWidth, $offsetX = 0) {
     $textBoundingBox = imagettfbbox($fontSize, 0, $fontPath, $text);
     $textWidth = $textBoundingBox[2] - $textBoundingBox[0];
-    return ($imageWidth - $textWidth) / 2;
+    // Apply the offset here, positive value moves to the right, negative to the left
+    return ($imageWidth - $textWidth) / 2 + $offsetX;
 }
 
-// Function to calculate the Y coordinate based on the desired position
-function calculateY($imageHeight, $desiredPosition) {
-    return intval($imageHeight * $desiredPosition);
+// Function to calculate the Y coordinate with vertical offset
+function calculateY($fontSize, $fontPath, $text, $imageHeight, $offsetY = 0) {
+    $textBoundingBox = imagettfbbox($fontSize, 0, $fontPath, $text);
+    // Calculate the height of the text to position it at the baseline
+    $textHeight = $textBoundingBox[1] - $textBoundingBox[7];
+    // Apply the offset here, positive value moves down, negative moves up
+    return ($imageHeight - $textHeight) / 2 + $offsetY;
 }
 
 // Get the parameters from the URL or GET Parameters
@@ -23,7 +27,9 @@ $dateOfIssue = isset($_GET["dateOfIssue"]) ? $_GET["dateOfIssue"] : date("F j, Y
 
 // Path to the certificate template and font
 $imagePath = 'assets/certificate_of_appreciation/1.png'; // Make sure this path is correct
-$fontPath = 'fonts/font2.ttf'; // Make sure this path is correct and the file is readable
+$fontPath = 'fonts/ArianaVioleta.ttf'; // Make sure this path is correct and the file is readable
+$signedByFontPath = 'fonts/signedByFont.ttf'; // Path to the font for 'Signed By'
+
 
 // Check if the image file exists and is readable
 if (!file_exists($imagePath) || !is_readable($imagePath)) {
@@ -43,17 +49,26 @@ $imageHeight = imagesy($image);
 $fontSize = 100; // Adjust the font size as needed
 
 // Set the text color (black)
-$textColour = imagecolorallocate($image, 0, 0, 0);
+$textColour = imagecolorallocate($image, 160,82,45);
 
 // Name text
 $nameText = $name;
-$x = calculateX($fontSize, $fontPath, $nameText, $imageWidth); // Use $imageWidth here
-$y = calculateY($imageHeight, 0.5); // Adjust the decimal to set the vertical position
+// Set your desired offsets here
+$offsetX = 0; // Horizontal adjustment (left/right)
+$offsetY = 300; // Vertical adjustment (up/down)
+$x = calculateX($fontSize, $fontPath, $nameText, $imageWidth, $offsetX);
+$y = calculateY($fontSize, $fontPath, $nameText, $imageHeight, $offsetY);
+
 imagettftext($image, $fontSize, 0, $x, $y, $textColour, $fontPath, $nameText);
 
 // // Signed by
-// $signedByText = "Signed by: " . $signedBy;
-// imagettftext($image, 24, 0, calculateX(24, $fontPath, $signedByText, $image), calculateY($image, 0.55), $textColour, $fontPath, $signedByText);
+$signedByFontPath = 'fonts/ArianaVioleta.ttf'; // Path to the different font for 'Signed By'
+$signedByText = $signedBy;
+$offsetXSignedBy = 0; // Horizontal adjustment for Signed By
+$offsetYSignedBy = 1150; // Vertical adjustment for Signed By
+$xSignedBy = calculateX($fontSize, $signedByFontPath, $signedByText, $imageWidth, $offsetXSignedBy);
+$ySignedBy = calculateY($fontSize, $signedByFontPath, $signedByText, $imageHeight, $offsetYSignedBy);
+imagettftext($image, $fontSize, 0, $xSignedBy, $ySignedBy, $textColour, $signedByFontPath, $signedByText);
 
 // // Date of Issue
 // $dateOfIssueText = "Date of Issue: " . $dateOfIssue;

@@ -127,7 +127,8 @@ while ($rows = mysqli_fetch_array($query_run))
     {
         // Date
         $textColour_Date = imagecolorallocate($image,  $date_rgb[0], $date_rgb[1], $date_rgb[2]);
-        $datetext = $company;
+        $currentDateTime = new DateTime('now');
+        $datetext = $currentDateTime->format("d-m-y");
         $offsetXSignedBy = $date_cords[0]; // Horizontal adjustment
         $offsetYSignedBy = $date_cords[1]; // Vertical adjustment
         $xSignedBy = calculateX($fontSize_Date, $signedByFontPath, $datetext, $imageWidth, $offsetXSignedBy);

@@ -34,7 +34,7 @@ $query = "SELECT * FROM `certificate_db` WHERE certificate_name='$cert_name'";
 $query_run = mysqli_query($link, $query);
 while ($rows = mysqli_fetch_array($query_run)) 
 {
-    $imagePath = "assets/certificate_of_appreciation/bestemployee.png"; // Make sure this path is correct
+    $imagePath = $rows['certificate_path'].".png"; // Make sure this path is correct
     $fontPath = $rows['primaryfont']; // Make sure this path is correct and the file is readable
     $signedByFontPath = $rows['primaryfont']; // Path to the font for 'Signed By
 }
@@ -91,7 +91,7 @@ while ($rows = mysqli_fetch_array($query_run))
 
         // Set your desired offsets here
         $offsetX = $name_cords[0]; // Horizontal adjustment (left/right)
-        $offsetY = $name_cords[1];; // Vertical adjustment (up/down)
+        $offsetY = $name_cords[1]; // Vertical adjustment (up/down)
         $x = calculateX($fontSize_Name, $fontPath, $nameText, $imageWidth, $offsetX);
         $y = calculateY($fontSize_Name, $fontPath, $nameText, $imageHeight, $offsetY);
 
@@ -123,7 +123,8 @@ while ($rows = mysqli_fetch_array($query_run))
         imagettftext($image, $fontSize_Company, 0, $xSignedBy, $ySignedBy, $textColour_Company, $signedByFontPath, $companyByText);
     }
 
-    if($rows['date_loc'] != 'NIL')
+    
+    if($rows['date_loc'] != "NIL")
     {
         // Date
         $textColour_Date = imagecolorallocate($image,  $date_rgb[0], $date_rgb[1], $date_rgb[2]);

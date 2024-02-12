@@ -16,7 +16,7 @@ public class CertificateApp {
     private String savePath;
 
     public CertificateApp() {
-        mainFrame = new JFrame("Certificate Generator");
+        mainFrame = new JFrame("Certificate Generator - By Ahimsa GMS");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(400, 200);
 

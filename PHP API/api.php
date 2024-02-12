@@ -149,12 +149,48 @@ while ($rows = mysqli_fetch_array($query_run))
 // $dateOfIssueText = "Date of Issue: " . $dateOfIssue;
 // imagettftext($image, 24, 0, calculateX(24, $fontPath, $dateOfIssueText, $image), calculateY($image, 0.6), $textColour, $fontPath, $dateOfIssueText);
 
-// Set the content-type
-header('Content-Type: image/png');
+// // Set the content-type
+// header('Content-Type: image/png');
 
-// Output the image
-imagepng($image);
+// // Output the image
+// imagepng($image);
 
-// Free up memory
+// // Free up memory
+// imagedestroy($image);
+
+require('fpdf/fpdf.php'); // Adjust the path to where you have placed FPDF
+
+// A4 page size in millimeters
+$a4WidthMm = 210;
+$a4HeightMm = 297;
+
+// Save the GD image to a temporary PNG file
+$tempImage = tempnam(sys_get_temp_dir(), 'cert') . '.png';
+imagepng($image, $tempImage);
 imagedestroy($image);
+
+// Create a PDF document
+$pdf = new FPDF();
+$pdf->AddPage();
+
+// Calculate image size to fit in A4, maintaining aspect ratio
+list($width, $height) = getimagesize($tempImage);
+$aspectRatio = $width / $height;
+$scale = min($a4WidthMm / $width, $a4HeightMm / $height);
+$newWidth = $width * $scale;
+$newHeight = $height * $scale;
+
+// Center the image
+$x = ($a4WidthMm - $newWidth) / 2;
+$y = ($a4HeightMm - $newHeight) / 2;
+
+$pdf->Image($tempImage, $x, $y, $newWidth, $newHeight);
+
+// Output the PDF to the browser as a download
+$pdf->Output('D', 'certificate.pdf');
+
+// Clean up the temporary image file
+unlink($tempImage);
+
+
 ?>

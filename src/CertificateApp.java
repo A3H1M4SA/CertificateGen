@@ -5,6 +5,8 @@ import java.io.*;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.awt.Desktop;
+import java.net.URI;
 
 public class CertificateApp {
     private JFrame mainFrame;
@@ -35,7 +37,7 @@ public class CertificateApp {
     }
 
     private void showCertificateCreationScreen() {
-        savePath = pathSelectionScreen.getSelectedPath();
+        savePath = pathSelectionScreen.getSavePath();
         switchToScreen(certificateCreationScreen.getPanel());
     }
 
@@ -55,15 +57,14 @@ public class CertificateApp {
         // Construct API parameters
         String urlParameters = constructQueryParameters(certificateDetails);
 
-        try {
-            // Your API endpoint
-            String apiUrl = "http://localhost/CertificateGen/PHP%20API/api.php";
-            sendApiRequest(apiUrl, urlParameters);
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(mainFrame, "Failed to generate certificate.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        // Update savePath with the user's selected path from PathSelectionScreen
+        savePath = pathSelectionScreen.getSavePath(); // This line is added here
+
+        // Now savePath contains the directory chosen by the user
+        // You can pass savePath to sendApiRequest or use it directly within that method
+        sendApiRequest("http://localhost/CertificateGen/PHP%20API/api.php?name=Ahimsa&signedBy=Ron%20Kulkin&certname=participation_1&company=Red%20Gate&signedby=Mr.Rohan%20Singh", urlParameters);
     }
+
 
     private String constructQueryParameters(Map<String, String> details) {
         StringBuilder builder = new StringBuilder();
@@ -82,25 +83,44 @@ public class CertificateApp {
     }
 
 
-    private void sendApiRequest(String apiUrl, String urlParameters) throws IOException {
-        URL url = new URL(apiUrl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
+    private void sendApiRequest(String apiUrl, String urlParameters) {
+        try {
+            URL url = new URL(apiUrl + "?" + urlParameters);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET"); // Adjust based on your API requirement
 
-        try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
-            wr.writeBytes(urlParameters);
-        }
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // The IOException can be thrown by getInputStream
+                InputStream inputStream = conn.getInputStream();
 
-        int responseCode = conn.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            // Handle successful response
-            JOptionPane.showMessageDialog(mainFrame, "Certificate generated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            // Handle server errors
-            JOptionPane.showMessageDialog(mainFrame, "Failed to generate certificate. Server error.", "Error", JOptionPane.ERROR_MESSAGE);
+                String filePath = savePath + File.separator + "test.pdf";
+                File fileToSave = new File(filePath);
+
+                // Ensure the directory exists
+                File parentDir = fileToSave.getParentFile();
+                if (parentDir != null) parentDir.mkdirs();
+
+                // The IOException can also be thrown by FileOutputStream constructor and write method
+                try (FileOutputStream outputStream = new FileOutputStream(fileToSave)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+
+                JOptionPane.showMessageDialog(mainFrame, "Certificate saved successfully as test.pdf.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(mainFrame, "Failed to generate certificate. Server responded with status: " + responseCode, "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(mainFrame, "An error occurred while trying to save the certificate.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CertificateApp::new);

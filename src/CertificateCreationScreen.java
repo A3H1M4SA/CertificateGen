@@ -8,69 +8,51 @@ public class CertificateCreationScreen {
     private JTextField nameField;
     private JComboBox<String> styleComboBox;
     private JLabel imagePreviewLabel; // For showing the preview of the certificate or related image
-    private ImagePreviewer imagePreviewer;
-    private APIClient apiClient; // Assuming you have an APIClient class
+    private ImagePreviewer imagePreviewer; // Assuming you have this class implemented
 
     public CertificateCreationScreen(Runnable generateAction) {
-        panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(4, 4, 4, 4); // Margins for components
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Vertical box layout for the main panel
 
-        initializeComponents(gbc);
-        addActionToGenerateButton(generateAction);
-
-        // Setup API Client
-        apiClient = new APIClient("http://localhost/CertificateGen/PHP%20API/api.php");
-
-        // Setup and display the initial image preview
+        // Image Preview
+        imagePreviewLabel = new JLabel();
         imagePreviewer = new ImagePreviewer(imagePreviewLabel);
         imagePreviewer.updateImageFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png");
 
-        panel.setPreferredSize(new Dimension(600, 400)); // Suggest a size for the panel
-    }
-
-    private void initializeComponents(GridBagConstraints gbc) {
-        // Image Preview
-        imagePreviewLabel = new JLabel();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2; // Span two columns
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(imagePreviewLabel, gbc);
-
-        // Reset to default for the next components
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-
-        // Name Field
-        panel.add(new JLabel("Name:"), gbc);
-        gbc.gridx = 1;
-        nameField = new JTextField(10);
-        panel.add(nameField, gbc);
-
-        // Style ComboBox
-        gbc.gridx = 0;
-        gbc.gridy++;
-        panel.add(new JLabel("Style:"), gbc);
-        gbc.gridx = 1;
-        styleComboBox = new JComboBox<>(new String[]{"Style 1", "Style 2", "Style 3", "Style 4", "Style 5"});
-        panel.add(styleComboBox, gbc);
-    }
-
-    private void addActionToGenerateButton(Runnable generateAction) {
+        // Use GridBagLayout for precise control over the image label
+        JPanel imagePanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 3; // Adjust based on the actual layout
-        gbc.gridwidth = 2; // Span two columns
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER; // Center the component
+        gbc.gridx = GridBagConstraints.RELATIVE; // Position relative to other components, if any
+        imagePanel.add(imagePreviewLabel, gbc);
 
+        // Add the imagePanel to the main panel
+        panel.add(imagePanel);
+
+
+        // Name input setup
+        JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        namePanel.add(new JLabel("Name:"));
+        nameField = new JTextField(20); // Increased field size for better appearance
+        namePanel.add(nameField);
+        panel.add(namePanel);
+
+        // Style selection setup
+        JPanel stylePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        stylePanel.add(new JLabel("Style:"));
+        styleComboBox = new JComboBox<>(new String[]{"Style 1", "Style 2", "Style 3", "Style 4", "Style 5"});
+        stylePanel.add(styleComboBox);
+        panel.add(stylePanel);
+
+        // Generate button setup
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton generateButton = new JButton("Generate");
-        generateButton.addActionListener(e -> {
-            generateAction.run();
-            // Potentially call apiClient.makeRequest(...) here
-        });
-        panel.add(generateButton, gbc);
+        generateButton.addActionListener(e -> generateAction.run());
+        buttonPanel.add(generateButton);
+        panel.add(buttonPanel);
+
+        // Set preferred size for the main panel to maintain a decent size
+        panel.setPreferredSize(new Dimension(600, 400));
     }
 
     public JPanel getPanel() {
@@ -81,7 +63,6 @@ public class CertificateCreationScreen {
         Map<String, String> details = new HashMap<>();
         details.put("name", nameField.getText());
         details.put("style", (String) styleComboBox.getSelectedItem());
-        // Add other details as needed...
         return details;
     }
 }

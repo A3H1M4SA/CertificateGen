@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
+import java.io.*;
+import java.net.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CertificateApp {
     private JFrame mainFrame;
@@ -24,37 +27,82 @@ public class CertificateApp {
     }
 
     private void showWelcomeScreen() {
-        mainFrame.getContentPane().removeAll();
-        mainFrame.getContentPane().add(welcomeScreen.getPanel(), BorderLayout.CENTER);
-        mainFrame.pack();
-        mainFrame.setLocationRelativeTo(null); // Center the frame
+        switchToScreen(welcomeScreen.getPanel());
     }
 
     private void showPathSelectionScreen() {
-        mainFrame.getContentPane().removeAll();
-        mainFrame.getContentPane().add(pathSelectionScreen.getPanel(), BorderLayout.CENTER);
-        mainFrame.pack();
-        mainFrame.setLocationRelativeTo(null); // Center the frame
+        switchToScreen(pathSelectionScreen.getPanel());
     }
 
     private void showCertificateCreationScreen() {
-        savePath = pathSelectionScreen.getSelectedPath(); // Get the save path from the previous screen
+        savePath = pathSelectionScreen.getSelectedPath();
+        switchToScreen(certificateCreationScreen.getPanel());
+    }
+
+    private void switchToScreen(JPanel panel) {
         mainFrame.getContentPane().removeAll();
-        mainFrame.getContentPane().add(certificateCreationScreen.getPanel(), BorderLayout.CENTER);
+        mainFrame.getContentPane().add(panel, BorderLayout.CENTER);
+        mainFrame.revalidate();
+        mainFrame.repaint();
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null); // Center the frame
     }
 
     private void generateCertificate() {
-        // Here you can implement the logic to call the API and generate the certificate
-        // The savePath variable holds the path where the user wants to save the certificate
-        // You can retrieve input values from certificateCreationScreen and use them for the API call
-        System.out.println("Generating certificate...");
-        // Example: Use savePath and other data to generate and save the certificate
+        // Collect user inputs (Implement these methods in CertificateCreationScreen)
+        Map<String, String> certificateDetails = certificateCreationScreen.getCertificateDetails();
+
+        // Construct API parameters
+        String urlParameters = constructQueryParameters(certificateDetails);
+
+        try {
+            // Your API endpoint
+            String apiUrl = "http://localhost/CertificateGen/PHP%20API/api.php";
+            sendApiRequest(apiUrl, urlParameters);
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(mainFrame, "Failed to generate certificate.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String constructQueryParameters(Map<String, String> details) {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, String> entry : details.entrySet()) {
+            if (builder.length() > 0) builder.append('&');
+            try {
+                builder.append(URLEncoder.encode(entry.getKey(), "UTF-8"))
+                        .append('=')
+                        .append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                // This should never happen for UTF-8 encoding
+                throw new RuntimeException("UTF-8 encoding not supported", e);
+            }
+        }
+        return builder.toString();
+    }
+
+
+    private void sendApiRequest(String apiUrl, String urlParameters) throws IOException {
+        URL url = new URL(apiUrl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+
+        try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
+            wr.writeBytes(urlParameters);
+        }
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            // Handle successful response
+            JOptionPane.showMessageDialog(mainFrame, "Certificate generated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            // Handle server errors
+            JOptionPane.showMessageDialog(mainFrame, "Failed to generate certificate. Server error.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CertificateApp::new);
     }
 }
-

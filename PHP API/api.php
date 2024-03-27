@@ -160,7 +160,7 @@ while ($rows = mysqli_fetch_array($query_run))
 // // Free up memory
 // imagedestroy($image);
 
-//Code To Save Certificate Cuttable Form PDF
+//Code To Save Certificate Cuttable Form PDF to Auto Download
 
 require('fpdf/fpdf.php'); // Adjust the path to where you have placed FPDF
 

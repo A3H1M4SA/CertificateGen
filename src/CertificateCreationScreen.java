@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class CertificateCreationScreen {
     private JPanel panel;
@@ -72,21 +73,26 @@ public class CertificateCreationScreen {
         String signedBy = URLEncoder.encode(signField.getText(), StandardCharsets.UTF_8);
         String apiUrlBase = "http://localhost/CertificateGen/PHP%20API/preview.php?";
 
-        switch (selectedStyle) {
+        switch (Objects.requireNonNull(selectedStyle)) {
             case "Appreciation Certificate":
-                return apiUrlBase + "name=" + name + "&certname=appreciation_1" +
-                        "&company=" + company + "&signedby=" + signedBy;
+                return apiUrlBase + "name=" + name + "&signedBy=" + signedBy +
+                        "&certname=appreciation_1" + "&company=" + company;
             case "Best Employee Certificate":
                 String dateOfIssue = getDateFromComboBoxes();
                 dateOfIssue = URLEncoder.encode(dateOfIssue, StandardCharsets.UTF_8);
-                return apiUrlBase + "name=" + name + "&certname=bestemployee" +
-                        "&company=" + company + "&signedby=" + signedBy +
+                return apiUrlBase + "name=" + name + "&signedBy=" + signedBy +
+                        "&certname=bestemployee" + "&company=" + company +
                         "&dateOfIssue=" + dateOfIssue;
+            case "Participation Certificate":
+                return apiUrlBase + "name=" + name + "&signedBy=" + signedBy +
+                        "&certname=participation_1" + "&company=" + company;
             // Add more cases for other certificate styles if needed
             default:
                 JOptionPane.showMessageDialog(panel, "Preview is not available for the selected certificate style.", "Preview Unavailable", JOptionPane.ERROR_MESSAGE);
                 return "";
         }
+
+
     }
 
     private String getDateFromComboBoxes() {

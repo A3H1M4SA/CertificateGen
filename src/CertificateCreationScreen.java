@@ -9,6 +9,7 @@ public class CertificateCreationScreen {
     private JPanel panel;
     private JTextField nameField, signField, companyField;
     private JComboBox<String> styleComboBox, dayComboBox, monthComboBox, yearComboBox;
+    private final Map<String, String> monthToNumberMap = new HashMap<>();
     private JLabel imagePreviewLabel;
     private ImagePreviewer imagePreviewer; // Assuming this is implemented for image preview
     private JPanel dynamicFieldsPanel;
@@ -64,18 +65,40 @@ public class CertificateCreationScreen {
         updateDynamicFields(); // Initialize fields
     }
 
-    private String previewCertificateAPICall(String name, String certname, String company, String signedBy) {
-        // Encode the parameters to handle spaces and other special characters
-        name = URLEncoder.encode(name, StandardCharsets.UTF_8);
-        company = URLEncoder.encode(company, StandardCharsets.UTF_8);
-        signedBy = URLEncoder.encode(signedBy, StandardCharsets.UTF_8);
+    private String buildCertificatePreviewApiUrl() {
+        String selectedStyle = (String) styleComboBox.getSelectedItem();
+        String name = URLEncoder.encode(nameField.getText(), StandardCharsets.UTF_8);
+        String company = URLEncoder.encode(companyField.getText(), StandardCharsets.UTF_8);
+        String signedBy = URLEncoder.encode(signField.getText(), StandardCharsets.UTF_8);
+        String apiUrlBase = "http://localhost/CertificateGen/PHP%20API/preview.php?";
 
-        return "http://localhost/CertificateGen/PHP%20API/preview.php?" +
-                "name=" + name +
-                "&signedby=" + signedBy+
-                "&certname=" + certname +
-                "&company=" + company;
+        switch (selectedStyle) {
+            case "Appreciation Certificate":
+                return apiUrlBase + "name=" + name + "&certname=appreciation_1" +
+                        "&company=" + company + "&signedby=" + signedBy;
+            case "Best Employee Certificate":
+                String dateOfIssue = getDateFromComboBoxes();
+                dateOfIssue = URLEncoder.encode(dateOfIssue, StandardCharsets.UTF_8);
+                return apiUrlBase + "name=" + name + "&certname=bestemployee" +
+                        "&company=" + company + "&signedby=" + signedBy +
+                        "&dateOfIssue=" + dateOfIssue;
+            // Add more cases for other certificate styles if needed
+            default:
+                JOptionPane.showMessageDialog(panel, "Preview is not available for the selected certificate style.", "Preview Unavailable", JOptionPane.ERROR_MESSAGE);
+                return "";
+        }
     }
+
+    private String getDateFromComboBoxes() {
+        String day = (String) dayComboBox.getSelectedItem();
+        String monthAbbreviation = (String) monthComboBox.getSelectedItem();
+        String month = monthToNumberMap.get(monthAbbreviation); // Convert abbreviation to number
+        String year = (String) yearComboBox.getSelectedItem();
+
+        // Format the date as dd/mm/yyyy
+        return day + "/" + month + "/" + year;
+    }
+
 
 
     private void setupGenerateAndPreviewButtons(Runnable previewAction) {
@@ -86,17 +109,9 @@ public class CertificateCreationScreen {
 
         JButton previewButton = new JButton("Preview");
         previewButton.addActionListener(e -> {
-            if ("Appreciation Certificate".equals(styleComboBox.getSelectedItem())) {
-                String apiUrl = previewCertificateAPICall(
-                        nameField.getText(),
-                        "appreciation_1",
-                        companyField.getText(),
-                        signField.getText()
-                );
+            String apiUrl = buildCertificatePreviewApiUrl();
+            if (!apiUrl.isEmpty()) {
                 imagePreviewer.updateImageFromURL(apiUrl);
-            } else {
-                // Handle other styles or show a message
-                JOptionPane.showMessageDialog(panel, "Preview is only available for Appreciation Certificates.", "Preview Unavailable", JOptionPane.ERROR_MESSAGE);
             }
         });
         buttonPanel.add(previewButton);
@@ -130,18 +145,26 @@ public class CertificateCreationScreen {
         JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         datePanel.add(new JLabel("Date:"));
 
-        // Sample date picker components
+        // Day picker components
         String[] days = new String[31];
         for (int i = 1; i <= 31; i++) {
-            days[i - 1] = Integer.toString(i);
+            days[i - 1] = String.format("%02d", i); // Ensuring days are in two-digit format
         }
         dayComboBox = new JComboBox<>(days);
         datePanel.add(dayComboBox);
 
-        String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-        monthComboBox = new JComboBox<>(months);
+        // Month picker components with abbreviations
+        String[] monthAbbreviations = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        // Initialize the monthComboBox with abbreviations
+        monthComboBox = new JComboBox<>(monthAbbreviations);
         datePanel.add(monthComboBox);
 
+        // Populate the monthToNumberMap for converting month abbreviations to numbers
+        for (int i = 0; i < monthAbbreviations.length; i++) {
+            monthToNumberMap.put(monthAbbreviations[i], String.format("%02d", i + 1)); // Ensure months are in two-digit format
+        }
+
+        // Year picker components
         String[] years = new String[11];
         for (int i = 0; i < years.length; i++) {
             years[i] = Integer.toString(2020 + i);

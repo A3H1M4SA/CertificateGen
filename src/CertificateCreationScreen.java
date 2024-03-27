@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +41,8 @@ public class CertificateCreationScreen {
         panel.add(scrollPane);
 
         imagePreviewer = new ImagePreviewer(imagePreviewLabel);
-        imagePreviewer.updateImageFromURL("http://localhost/CertificateGen/PHP%20API/preview.php?name=Ahimsa&signedBy=Ron%20Kulkin&certname=appreciation_1&company=Red%20Gate&signedby=Mr.Rohan%20Singh"); // Use the correct path to your image file
+        // Placeholder Image Before Certificate Generates
+        imagePreviewer.updateImageFromURL("http://localhost/CertificateGen/src/Placeholder.jpg");
     }
 
 
@@ -61,17 +64,41 @@ public class CertificateCreationScreen {
         updateDynamicFields(); // Initialize fields
     }
 
+    private String previewCertificateAPICall(String name, String certname, String company, String signedBy) {
+        // Encode the parameters to handle spaces and other special characters
+        name = URLEncoder.encode(name, StandardCharsets.UTF_8);
+        company = URLEncoder.encode(company, StandardCharsets.UTF_8);
+        signedBy = URLEncoder.encode(signedBy, StandardCharsets.UTF_8);
+
+        return "http://localhost/CertificateGen/PHP%20API/preview.php?" +
+                "name=" + name +
+                "&signedby=" + signedBy+
+                "&certname=" + certname +
+                "&company=" + company;
+    }
+
+
     private void setupGenerateAndPreviewButtons(Runnable previewAction) {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton generateButton = new JButton("Generate");
-        generateButton.addActionListener(e -> {
-            Map<String, String> details = getCertificateDetails();
-            System.out.println("Generating certificate with details: " + details);
-        });
+        generateButton.addActionListener(e -> previewAction.run());
         buttonPanel.add(generateButton);
 
         JButton previewButton = new JButton("Preview");
-        previewButton.addActionListener(e -> previewAction.run());
+        previewButton.addActionListener(e -> {
+            if ("Appreciation Certificate".equals(styleComboBox.getSelectedItem())) {
+                String apiUrl = previewCertificateAPICall(
+                        nameField.getText(),
+                        "appreciation_1",
+                        companyField.getText(),
+                        signField.getText()
+                );
+                imagePreviewer.updateImageFromURL(apiUrl);
+            } else {
+                // Handle other styles or show a message
+                JOptionPane.showMessageDialog(panel, "Preview is only available for Appreciation Certificates.", "Preview Unavailable", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         buttonPanel.add(previewButton);
 
         panel.add(buttonPanel);

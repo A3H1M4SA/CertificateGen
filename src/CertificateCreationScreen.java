@@ -16,25 +16,32 @@ public class CertificateCreationScreen {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        setupDynamicFieldsPanel(); // Initialize dynamicFieldsPanel first
+        setupStyleComboBox(); // Now it's safe to call setupStyleComboBox
         setupImagePreview();
-        setupDynamicFieldsPanel();
-        setupStyleComboBox();
         setupGenerateAndPreviewButtons(previewAction);
 
         panel.setPreferredSize(new Dimension(650, 500));
     }
 
-    private void setupImagePreview() {
-        imagePreviewLabel = new JLabel();
-        imagePreviewer = new ImagePreviewer(imagePreviewLabel);
-        // Assuming a method to set a placeholder or initial image
-        imagePreviewer.updateImageFromURL("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/800px-Google_2015_logo.svg.png");
 
-        JPanel imagePanel = new JPanel(new BorderLayout());
-        imagePanel.add(imagePreviewLabel, BorderLayout.CENTER);
-        imagePanel.setBorder(BorderFactory.createTitledBorder("Preview"));
-        panel.add(imagePanel);
+    private void setupImagePreview() {
+        imagePreviewLabel = new JLabel(new ImageIcon(), SwingConstants.CENTER);
+        // Set a preferred size for the image preview label, this might need to be adjusted
+        imagePreviewLabel.setPreferredSize(new Dimension(600, 400));
+
+        // Wrap the label in a JScrollPane to allow scrolling if the image is larger than the display area
+        JScrollPane scrollPane = new JScrollPane(imagePreviewLabel);
+        scrollPane.setPreferredSize(new Dimension(600, 400)); // Set the scroll pane's size
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Preview"));
+
+        // Add the scrollPane to the panel instead of the label directly
+        panel.add(scrollPane);
+
+        imagePreviewer = new ImagePreviewer(imagePreviewLabel);
+        imagePreviewer.updateImageFromURL("http://localhost/CertificateGen/PHP%20API/preview.php?name=Ahimsa&signedBy=Ron%20Kulkin&certname=appreciation_1&company=Red%20Gate&signedby=Mr.Rohan%20Singh"); // Use the correct path to your image file
     }
+
 
     private void setupDynamicFieldsPanel() {
         dynamicFieldsPanel = new JPanel();
@@ -49,7 +56,7 @@ public class CertificateCreationScreen {
         styleComboBox = new JComboBox<>(new String[]{"Appreciation Certificate", "Participation Certificate", "Best Employee Certificate"});
         styleComboBox.addActionListener(e -> updateDynamicFields());
         stylePanel.add(styleComboBox);
-        panel.add(stylePanel);
+        panel.add(stylePanel, 0); // Adding at index 0 to ensure it's the first component
 
         updateDynamicFields(); // Initialize fields
     }

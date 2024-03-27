@@ -145,6 +145,8 @@ while ($rows = mysqli_fetch_array($query_run))
 
 }
 
+// Code to Preview Certificate Whilst testing API
+
 // // Date of Issue
 // $dateOfIssueText = "Date of Issue: " . $dateOfIssue;
 // imagettftext($image, 24, 0, calculateX(24, $fontPath, $dateOfIssueText, $image), calculateY($image, 0.6), $textColour, $fontPath, $dateOfIssueText);
@@ -157,6 +159,8 @@ while ($rows = mysqli_fetch_array($query_run))
 
 // // Free up memory
 // imagedestroy($image);
+
+//Code To Save Certificate Cuttable Form PDF
 
 require('fpdf/fpdf.php'); // Adjust the path to where you have placed FPDF
 
@@ -194,3 +198,15 @@ unlink($tempImage);
 
 
 ?>
+
+
+
+
+// Appreciation Certificate
+// Fields : Name, Sign, Company
+
+// Participation Certificate
+// Fields : Name, Sign, Company
+
+// Best Employee Certificate
+// Fields : Name, Sign, Company, Date

@@ -85,7 +85,7 @@ public class CertificateApp {
         return builder.toString();
     }
 
-
+    //Sends API request to Server via HttpUrlConnection
     private void sendApiRequest(String apiUrl) {
         try {
             URL url = new URL(apiUrl);

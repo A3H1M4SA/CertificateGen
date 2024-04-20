@@ -62,6 +62,7 @@ public class CertificateApp {
 
         if (apiUrl != null && !apiUrl.isEmpty()) {
             sendApiRequest(apiUrl);
+
         } else {
             JOptionPane.showMessageDialog(mainFrame, "Failed to generate certificate due to invalid API URL.", "Error", JOptionPane.ERROR_MESSAGE);
         }

@@ -86,7 +86,7 @@ public class CertificateApp {
         return builder.toString();
     }
 
-    //Sends API request to Server via HttpUrlConnection
+    //Sends API request to Server via HttpUrlConnection and Saves the Certificate via File Output Stream
     private void sendApiRequest(String apiUrl) {
         try {
             URL url = new URL(apiUrl);
@@ -98,7 +98,7 @@ public class CertificateApp {
                 // The IOException can be thrown by getInputStream
                 InputStream inputStream = conn.getInputStream();
 
-                String filePath = savePath + File.separator + "test.pdf";
+                String filePath = savePath + File.separator + "certificate.pdf";
                 File fileToSave = new File(filePath);
 
                 // Ensure the directory exists

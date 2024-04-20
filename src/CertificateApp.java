@@ -114,7 +114,7 @@ public class CertificateApp {
                     }
                 }
 
-                JOptionPane.showMessageDialog(mainFrame, "Certificate saved successfully as test.pdf.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(mainFrame, "Certificate saved successfully as certificate.pdf.", "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(mainFrame, "Failed to generate certificate. Server responded with status: " + responseCode, "Error", JOptionPane.ERROR_MESSAGE);
             }

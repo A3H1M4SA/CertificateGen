@@ -48,6 +48,7 @@ public class PathSelectionScreen {
         panel.setPreferredSize(new Dimension(600, 400));
     }
 
+    //Function to choose path to save the generated Certificate
     private void choosePath() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select a directory to save the certificate");

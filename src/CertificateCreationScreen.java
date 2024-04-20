@@ -21,33 +21,26 @@ public class CertificateCreationScreen {
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         setupDynamicFieldsPanel(); // Initialize dynamicFieldsPanel first
-        setupStyleComboBox(); // Now it's safe to call setupStyleComboBox
+        setupStyleComboBox();
         setupImagePreview();
         setupGenerateAndPreviewButtons(previewAction);
 
         panel.setPreferredSize(new Dimension(650, 500));
     }
 
-
+    //JPanel For Image Preview Window
     private void setupImagePreview() {
         imagePreviewLabel = new JLabel(new ImageIcon(), SwingConstants.CENTER);
-        // Set a preferred size for the image preview label, this might need to be adjusted
         imagePreviewLabel.setPreferredSize(new Dimension(600, 400));
-
-        // Wrap the label in a JScrollPane to allow scrolling if the image is larger than the display area
         JScrollPane scrollPane = new JScrollPane(imagePreviewLabel);
-        scrollPane.setPreferredSize(new Dimension(600, 400)); // Set the scroll pane's size
+        scrollPane.setPreferredSize(new Dimension(600, 400));
         scrollPane.setBorder(BorderFactory.createTitledBorder("Preview"));
-
-        // Add the scrollPane to the panel instead of the label directly
         panel.add(scrollPane);
-
         imagePreviewer = new ImagePreviewer(imagePreviewLabel);
-        // Placeholder Image Before Certificate Generates
-        imagePreviewer.updateImageFromURL("http://localhost/CertificateGen/src/Placeholder.jpg");
+        imagePreviewer.updateImageFromURL(SourceClass.THUMBNAIL_URL);
     }
 
-
+    //Dynamic fields to auto adjust the Certificat Inputs
     private void setupDynamicFieldsPanel() {
         dynamicFieldsPanel = new JPanel();
         dynamicFieldsPanel.setLayout(new BoxLayout(dynamicFieldsPanel, BoxLayout.Y_AXIS));
@@ -66,35 +59,33 @@ public class CertificateCreationScreen {
         updateDynamicFields(); // Initialize fields
     }
 
+    //Calls The API from SourceClass to Preview the Certificate
     private String buildCertificatePreviewApiUrl() {
         String selectedStyle = (String) styleComboBox.getSelectedItem();
         String name = URLEncoder.encode(nameField.getText(), StandardCharsets.UTF_8);
         String company = URLEncoder.encode(companyField.getText(), StandardCharsets.UTF_8);
         String signedBy = URLEncoder.encode(signField.getText(), StandardCharsets.UTF_8);
-        String apiUrlBase = "http://localhost/CertificateGen/PHP%20API/preview.php?";
 
         switch (Objects.requireNonNull(selectedStyle)) {
             case "Appreciation Certificate":
-                return apiUrlBase + "name=" + name + "&signedBy=" + signedBy +
+                return SourceClass.PREVIEW_API_URL + "?name=" + name + "&signedBy=" + signedBy +
                         "&certname=appreciation_1" + "&company=" + company;
             case "Best Employee Certificate":
                 String dateOfIssue = getDateFromComboBoxes();
                 dateOfIssue = URLEncoder.encode(dateOfIssue, StandardCharsets.UTF_8);
-                return apiUrlBase + "name=" + name + "&signedBy=" + signedBy +
+                return SourceClass.PREVIEW_API_URL + "?name=" + name + "&signedBy=" + signedBy +
                         "&certname=bestemployee" + "&company=" + company +
                         "&dateOfIssue=" + dateOfIssue;
             case "Participation Certificate":
-                return apiUrlBase + "name=" + name + "&signedBy=" + signedBy +
+                return SourceClass.PREVIEW_API_URL + "?name=" + name + "&signedBy=" + signedBy +
                         "&certname=participation_1" + "&company=" + company;
-            // Add more cases for other certificate styles if needed
             default:
                 JOptionPane.showMessageDialog(panel, "Preview is not available for the selected certificate style.", "Preview Unavailable", JOptionPane.ERROR_MESSAGE);
                 return "";
         }
-
-
     }
 
+    //Function to return date
     private String getDateFromComboBoxes() {
         String day = (String) dayComboBox.getSelectedItem();
         String monthAbbreviation = (String) monthComboBox.getSelectedItem();
@@ -106,6 +97,7 @@ public class CertificateCreationScreen {
     }
 
 
+    //Function To Preview the Certificate
 
     private void setupGenerateAndPreviewButtons(Runnable previewAction) {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -125,6 +117,7 @@ public class CertificateCreationScreen {
         panel.add(buttonPanel);
     }
 
+    //Dynamic Fields for the 3 Styles of Certificates
     private void updateDynamicFields() {
         dynamicFieldsPanel.removeAll();
 
@@ -147,6 +140,7 @@ public class CertificateCreationScreen {
         panel.add(fieldPanel);
     }
 
+    //Date picker to select date input field for the Certificate
     private void addDatePickerToPanel(JPanel panel) {
         JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         datePanel.add(new JLabel("Date:"));
@@ -216,4 +210,3 @@ public class CertificateCreationScreen {
         });
     }
 }
-

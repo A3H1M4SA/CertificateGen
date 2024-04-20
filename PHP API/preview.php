@@ -6,7 +6,7 @@ require_once "dbconnect.php";
 function calculateX($fontSize, $fontPath, $text, $imageWidth, $offsetX = 0) {
     $textBoundingBox = imagettfbbox($fontSize, 0, $fontPath, $text);
     $textWidth = $textBoundingBox[2] - $textBoundingBox[0];
-    // Apply the offset here, positive value moves to the right, negative to the left
+    // Applys the offset here, positive value moves to the right, negative to the left
     return ($imageWidth - $textWidth) / 2 + $offsetX;
 }
 
@@ -21,9 +21,9 @@ function calculateY($fontSize, $fontPath, $text, $imageHeight, $offsetY = 0) {
 
 // Get the parameters from the URL or GET Parameters
 $name = isset($_GET["name"]) ? $_GET["name"] : "Default Name";
+$signedBy = isset($_GET["signedBy"]) ? $_GET["signedBy"] : "Default Signee";
 $style = isset($_GET["style"]) ? $_GET["style"] : "Style 1";
 $company = isset($_GET["company"]) ? $_GET["company"] : "Default Company";
-$signedBy = isset($_GET["signedBy"]) ? $_GET["signedBy"] : "Default Signee";
 $dateOfIssue = isset($_GET["dateOfIssue"]) ? $_GET["dateOfIssue"] : date("F j, Y");
 $cert_name = isset($_GET["certname"]) ? $_GET["certname"] : "Default Certificate";
 
@@ -34,14 +34,14 @@ $query = "SELECT * FROM `certificate_db` WHERE certificate_name='$cert_name'";
 $query_run = mysqli_query($link, $query);
 while ($rows = mysqli_fetch_array($query_run)) 
 {
-    $imagePath = $rows['certificate_path'].".png"; // Make sure this path is correct
-    $fontPath = $rows['primaryfont']; // Make sure this path is correct and the file is readable
+    $imagePath = $rows['certificate_path'].".png"; // Certifcate Image Path 
+    $fontPath = $rows['primaryfont']; // General Font Path
     $signedByFontPath = $rows['primaryfont']; // Path to the font for 'Signed By
 }
 
 
 
-// Check if the image file exists and is readable
+// Checks if the image file exists and is readable
 if (!file_exists($imagePath) || !is_readable($imagePath)) {
     die('The image file does not exist or is not readable.');
 }
@@ -51,12 +51,12 @@ if (!$image) {
     die('Failed to create image from file.');
 }
 
-// Get image dimensions
+// Gets image dimensions
 $imageWidth = imagesx($image);
 $imageHeight = imagesy($image);
 
 
-// Set the text color (black)
+// Sets the text color (black)
 $query = "SELECT * FROM `certificate_db` WHERE certificate_name='$cert_name'";
 $query_run = mysqli_query($link, $query);
 while ($rows = mysqli_fetch_array($query_run)) 
@@ -68,9 +68,6 @@ while ($rows = mysqli_fetch_array($query_run))
     $company_cords = explode(",", trim($rows['company_loc'], "()")) ;
     $date_cords = explode(",", trim($rows['date_loc'], "()")) ;
 
-    // Gets the Color(RGB) Values for each from the DB
-    // $color_rgb = explode(",", trim($rows['text_color'], "()")) ;
-    // $othercolor_rgb = explode(",", trim($rows['othertext_color'], "()")) ;
     $name_rgb = explode(",", trim($rows['name_textcolor'], "()")) ;
     $signedby_rgb = explode(",", trim($rows['signedby_textcolor'], "()")) ;
     $company_rgb = explode(",", trim($rows['company_textcolor'], "()")) ;
@@ -89,7 +86,7 @@ while ($rows = mysqli_fetch_array($query_run))
         $nameText = $name;
         $textColour = imagecolorallocate($image,  $name_rgb[0], $name_rgb[1], $name_rgb[2]);
 
-        // x/y offsets
+        // Sets x/y desired offsets here
         $offsetX = $name_cords[0]; // Horizontal adjustment (left/right)
         $offsetY = $name_cords[1]; // Vertical adjustment (up/down)
         $x = calculateX($fontSize_Name, $fontPath, $nameText, $imageWidth, $offsetX);
@@ -128,8 +125,7 @@ while ($rows = mysqli_fetch_array($query_run))
     {
         // Date
         $textColour_Date = imagecolorallocate($image,  $date_rgb[0], $date_rgb[1], $date_rgb[2]);
-        $currentDateTime = new DateTime('now');
-        $datetext = $currentDateTime->format("d-m-y");
+        $datetext = $dateOfIssue;
         $offsetXSignedBy = $date_cords[0]; // Horizontal adjustment
         $offsetYSignedBy = $date_cords[1]; // Vertical adjustment
         $xSignedBy = calculateX($fontSize_Date, $signedByFontPath, $datetext, $imageWidth, $offsetXSignedBy);
@@ -145,46 +141,22 @@ while ($rows = mysqli_fetch_array($query_run))
 
 }
 
-//Code To Save Certificate Cuttable Form PDF to Auto Download
+// Code to Preview Certificate Whilst testing API
 
-require('fpdf/fpdf.php'); // path to where you have placed FPDF library
 
-// A4 page size in millimeters
-$a4WidthMm = 210;
-$a4HeightMm = 297;
+// Set the content-type
+header('Content-Type: image/png');
 
-// Save the GD image to a temporary PNG file
-$tempImage = tempnam(sys_get_temp_dir(), 'cert') . '.png';
-imagepng($image, $tempImage);
+// Output the image
+imagepng($image);
+
+// Free up memory
 imagedestroy($image);
 
-// Creates a PDF document
-$pdf = new FPDF();
-$pdf->AddPage();
-
-// Calculate image size to fit in A4, maintaining aspect ratio
-list($width, $height) = getimagesize($tempImage);
-$aspectRatio = $width / $height;
-$scale = min($a4WidthMm / $width, $a4HeightMm / $height);
-$newWidth = $width * $scale;
-$newHeight = $height * $scale;
-
-// Center the image
-$x = ($a4WidthMm - $newWidth) / 2;
-$y = ($a4HeightMm - $newHeight) / 2;
-
-$pdf->Image($tempImage, $x, $y, $newWidth, $newHeight);
-
-// Outputs the PDF to the browser as a download
-$pdf->Output('D', 'certificate.pdf');
-
-// Clean up the temporary image file
 unlink($tempImage);
 
 
 ?>
-
-
 
 
 // Appreciation Certificate

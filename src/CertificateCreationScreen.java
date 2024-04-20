@@ -60,30 +60,47 @@ public class CertificateCreationScreen {
     }
 
     //Calls The API from SourceClass to Preview the Certificate
-    private String buildCertificatePreviewApiUrl() {
+    // Method to build the API URL for previewing certificates
+    public  String buildCertificatePreviewApiUrl() {
+        return buildCertificateApiUrl(SourceClass.PREVIEW_API_URL);
+    }
+
+    // Method to build the API URL for generating and saving certificates
+    public  String buildCertificateSaveApiUrl() {
+        return buildCertificateApiUrl(SourceClass.SAVE_API_URL);
+    }
+
+    // General method to construct API URL
+    private String buildCertificateApiUrl(String apiUrl) {
         String selectedStyle = (String) styleComboBox.getSelectedItem();
         String name = URLEncoder.encode(nameField.getText(), StandardCharsets.UTF_8);
         String company = URLEncoder.encode(companyField.getText(), StandardCharsets.UTF_8);
         String signedBy = URLEncoder.encode(signField.getText(), StandardCharsets.UTF_8);
 
+        StringBuilder urlBuilder = new StringBuilder(apiUrl);
+        urlBuilder.append("?name=").append(name);
+        urlBuilder.append("&signedBy=").append(signedBy);
+        urlBuilder.append("&company=").append(company);
+
         switch (Objects.requireNonNull(selectedStyle)) {
             case "Appreciation Certificate":
-                return SourceClass.PREVIEW_API_URL + "?name=" + name + "&signedBy=" + signedBy +
-                        "&certname=appreciation_1" + "&company=" + company;
+                urlBuilder.append("&certname=appreciation_1");
+                break;
             case "Best Employee Certificate":
                 String dateOfIssue = getDateFromComboBoxes();
-                dateOfIssue = URLEncoder.encode(dateOfIssue, StandardCharsets.UTF_8);
-                return SourceClass.PREVIEW_API_URL + "?name=" + name + "&signedBy=" + signedBy +
-                        "&certname=bestemployee" + "&company=" + company +
-                        "&dateOfIssue=" + dateOfIssue;
+                urlBuilder.append("&certname=bestemployee");
+                urlBuilder.append("&dateOfIssue=").append(URLEncoder.encode(dateOfIssue, StandardCharsets.UTF_8));
+                break;
             case "Participation Certificate":
-                return SourceClass.PREVIEW_API_URL + "?name=" + name + "&signedBy=" + signedBy +
-                        "&certname=participation_1" + "&company=" + company;
+                urlBuilder.append("&certname=participation");
+                break;
             default:
-                JOptionPane.showMessageDialog(panel, "Preview is not available for the selected certificate style.", "Preview Unavailable", JOptionPane.ERROR_MESSAGE);
-                return "";
+                JOptionPane.showMessageDialog(panel, "API URL construction failed. Invalid certificate style selected.", "Error", JOptionPane.ERROR_MESSAGE);
+                return null;
         }
+        return urlBuilder.toString();
     }
+
 
     //Function to return date
     private String getDateFromComboBoxes() {

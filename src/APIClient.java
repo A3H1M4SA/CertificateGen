@@ -11,6 +11,7 @@ public class APIClient {
         this.baseUrl = baseUrl;
     }
 
+    //Handles the API Request
     public String makeRequest(Map<String, String> parameters) throws IOException {
         String urlParameters = constructQueryParameters(parameters);
         URL url = new URL(baseUrl + "?" + urlParameters);

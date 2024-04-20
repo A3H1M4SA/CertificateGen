@@ -51,19 +51,22 @@ public class CertificateApp {
     }
 
     private void generateCertificate() {
-        // Collect user inputs (Implement these methods in CertificateCreationScreen)
+        // Collect user inputs
         Map<String, String> certificateDetails = certificateCreationScreen.getCertificateDetails();
 
         // Construct API parameters
         String urlParameters = constructQueryParameters(certificateDetails);
 
-        // Update savePath with the user's selected path from PathSelectionScreen
-        savePath = pathSelectionScreen.getSavePath(); // This line is added here
+        // Get the URL for saving the certificate
+        String apiUrl = certificateCreationScreen.buildCertificateSaveApiUrl();
 
-        // Now savePath contains the directory chosen by the user
-        // You can pass savePath to sendApiRequest or use it directly within that method
-        sendApiRequest("http://localhost/CertificateGen/PHP%20API/api.php?name=Ahimsa&signedBy=Ron%20Kulkin&certname=participation_1&company=Red%20Gate&signedby=Mr.Rohan%20Singh", urlParameters);
+        if (apiUrl != null && !apiUrl.isEmpty()) {
+            sendApiRequest(apiUrl);
+        } else {
+            JOptionPane.showMessageDialog(mainFrame, "Failed to generate certificate due to invalid API URL.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
+
 
 
     private String constructQueryParameters(Map<String, String> details) {
@@ -83,9 +86,9 @@ public class CertificateApp {
     }
 
 
-    private void sendApiRequest(String apiUrl, String urlParameters) {
+    private void sendApiRequest(String apiUrl) {
         try {
-            URL url = new URL(apiUrl + "?" + urlParameters);
+            URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET"); // Adjust based on your API requirement
 

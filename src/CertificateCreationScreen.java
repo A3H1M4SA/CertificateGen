@@ -118,7 +118,7 @@ public class CertificateCreationScreen {
 
     private void setupGenerateAndPreviewButtons(Runnable previewAction) {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton generateButton = new JButton("Generate");
+        JButton generateButton = new JButton("Save");
         generateButton.addActionListener(e -> previewAction.run());
         buttonPanel.add(generateButton);
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 05, 2024 at 12:25 PM
+-- Generation Time: Apr 20, 2024 at 04:19 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -84,9 +84,9 @@ CREATE TABLE `certificate_db` (
 --
 
 INSERT INTO `certificate_db` (`certificate_id`, `name_loc`, `signedby_loc`, `company_loc`, `date_loc`, `name_textcolor`, `signedby_textcolor`, `company_textcolor`, `date_textcolor`, `name_fontsize`, `signedby_fontsize`, `company_fontsize`, `other_fontsize`, `date_fontsize`, `othertext_color`, `primaryfont`, `certificate_name`, `certificate_path`, `certificate_used`) VALUES
-(1, '(0,390)', '(0,1000)', '(-30,-1000)', 'NIL', '(160,82,45)', '(160,82,45)', '(160,82,45)', '(160,82,45)', '250', '100', '100', '100', '100', '(160,82,45)', 'fonts/ArianaVioleta.ttf', 'appreciation_1', 'assets/certificate_of_appreciation/appreciation_1', '50'),
-(2, '(0,100)', '(0,950)', '(240,360)', 'NIL', '(218,165,32)', '(0,0,0)', '(0,0,0)', '(0,0,0)', '200', '100', '80', '100', '100', '(160,82,45)', 'fonts/Comfortaa.ttf', 'participation_1', 'assets/certificate_of_appreciation/participation_1', '113'),
-(3, '(0,100)', '(-150,700)', '(50,-900)', '(470,680)', '(160,82,45)', '(160,82,45)', '(255,255,255)', '(160,82,45)', '220', '70', '150', '150', '70', '(255,255,255)', 'fonts/ArianaVioleta.ttf', 'bestemployee', 'assets/certificate_of_appreciation/bestemployee', '141');
+(1, '(0,390)', '(0,1000)', '(-30,-1000)', 'NIL', '(160,82,45)', '(160,82,45)', '(160,82,45)', '(160,82,45)', '250', '100', '100', '100', '100', '(160,82,45)', 'fonts/ArianaVioleta.ttf', 'appreciation_1', 'assets/certificate_of_appreciation/appreciation_1', '82'),
+(2, '(0,100)', '(0,950)', '(240,360)', 'NIL', '(218,165,32)', '(0,0,0)', '(0,0,0)', '(0,0,0)', '200', '100', '80', '100', '100', '(160,82,45)', 'fonts/Comfortaa.ttf', 'participation', 'assets/certificate_of_appreciation/participation', '143'),
+(3, '(0,100)', '(-150,700)', '(50,-900)', '(470,680)', '(160,82,45)', '(160,82,45)', '(255,255,255)', '(160,82,45)', '220', '70', '150', '150', '70', '(255,255,255)', 'fonts/ArianaVioleta.ttf', 'bestemployee', 'assets/certificate_of_appreciation/bestemployee', '182');
 
 -- --------------------------------------------------------
 

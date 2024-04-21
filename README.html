@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Certificate Generator - Student ID: 2287166</title>
+<title>Certificate Generator - Ahimsa GMS</title>
 <style>
     body {
         font-family: 'Arial', sans-serif;
@@ -42,7 +43,6 @@
         margin: 8px 0;
         padding: 10px;
         border-radius: 8px;
-        color: #ccc;
     }
     .icon-row {
         display: flex;
@@ -50,7 +50,7 @@
         gap: 10px;
     }
     .icon-row img {
-        width: 40px; /* Smaller size and in a row */
+        width: 40px;
         height: 40px;
     }
     footer {
@@ -69,37 +69,25 @@
             <img src="https://komarev.com/ghpvc/?username=a3h1m4sa&label=Profile%20views&color=0e75b6&style=flat" alt="Profile views">
             <img src="https://github-profile-trophy.vercel.app/?username=a3h1m4sa" alt="GitHub Trophies">
         </div>
-        <p>This Certifcate Generator Github Repo <a href="https://github.com/A3H1M4SA/CertificateGen/tree/master">Here</a>.</p>
+        <p>This Certificate Generator GitHub Repo <a href="https://github.com/A3H1M4SA/CertificateGen/tree/master">Here</a>.</p>
     </header>
 
     <section>
         <h2>Introduction</h2>
-        <p>This University Project, part of Anglia Ruskin courses, showcases an integration between Java and PHP, focusing on creating a scalable certificate generator application. Utilizing OOP principles, the project emphasizes modularity, reusability, and maintainability in software development.</p>
+        <p>This University Project, part of Anglia Ruskin courses, showcases an integration between Java and PHP, focusing on creating a scalable certificate generator application. Utilizing OOP principles, the project emphasizes modularity, reusability, and maintainability in software development. The Java project uses a PHP API developed by me to generate the certificates.</p>
     </section>
 
     <section>
-        <h2>Prerequisites</h2>
+        <h2>Customization and Flexibility</h2>
+        <p>The application provides extensive customization options for certificates:</p>
         <ul>
-            <li>Java JDK 11 or higher</li>
-            <li>IntelliJ IDEA or any compatible Java IDE installed</li>
+            <li>Add new certificates and assign specific fonts for each certificate.</li>
+            <li>Assign specific fonts for each field (Name, Sign, Date).</li>
+            <li>Assign any color for the fonts of any field.</li>
+            <li>Add fields and change any field location by X/Y coordinates.</li>
+            <li>When certificates are saved, they are formatted in an A4 cuttable format, making it easy to cut them out after printing.</li>
         </ul>
-    </section>
-
-    <section>
-        <h2>Installation and Setup</h2>
-        <ol>
-            <li>Open IntelliJ IDEA.</li>
-            <li>Import the Certificate Generator project.</li>
-        </ol>
-    </section>
-
-    <section>
-        <h2>Running the Application</h2>
-        <ol>
-            <li>Ensure that the Java JDK is correctly installed on your system by running `java -version` in your terminal.</li>
-            <li>Launch the project in IntelliJ IDEA.</li>
-            <li>Run the application by clicking on the run button.</li>
-        </ol>
+        <p>All these customizations must be made on the PHP side, and the application is ready to use as the API is hosted for demonstration purposes.</p>
     </section>
 
     <section>
@@ -117,22 +105,40 @@
     </section>
 
     <section>
-        <h2>Project Structure</h2>
+        <h2>Database and API Configuration</h2>
+        <p>Details of the database fields used for certificate customization:</p>
         <ul>
-            <li>📦 <b>APIClient.java</b>: Handles all API communications, encapsulating HTTP requests and responses.</li>
-            <li>🖼️ <b>ImagePreviewer.java</b>: Manages image loading and display, offering functionality to preview images from URLs or file paths.</li>
-            <li>📝 <b>CertificateCreationScreen.java</b>: Provides the UI for certificate customization, integrating components for user input and image preview.</li>
-            <li>🗂️ <b>PathSelectionScreen.java</b>: Allows users to select a directory for saving the generated certificates.</li>
+            <li>certificate_id: Unique identifier for each certificate.</li>
+            <li>name_loc, signedby_loc, company_loc, date_loc: X/Y coordinates for placeholders.</li>
+            <li>name_textcolor, signedby_textcolor, company_textcolor, date_textcolor: RGB color codes for text.</li>
+            <li>name_fontsize, signedby_fontsize, company_fontsize, date_fontsize: Font sizes for each text field.</li>
+            <li>primaryfont: Primary font used for Name and Company Name.</li>
+            <li>certificate_name: Name of the certificate style, e.g., abcd.</li>
+            <li>certificate_path: Path to the certificate image file, e.g., assets/abcd.png.</li
+
+>
+            <li>certificate_used: Counter to track how many times each certificate is used.</li>
         </ul>
     </section>
 
     <section>
-        <h2>Key Features</h2>
+        <h2>API and Server Info</h2>
+        <p>The APIs for previewing and saving certificates are hosted on my server, ensuring the application is ready to use immediately:</p>
         <ul>
-            <li>⚙️ <b>OOP Concepts</b>: Leverages classes, objects, inheritance, and polymorphism to build a cohesive and flexible application architecture.</li>
-            <li>🌐 <b>API Integration</b>: Seamlessly integrates with a PHP backend for generating and retrieving certificates.</li>
-            <li>🖥️ <b>Swing GUI</b>: Utilizes Java Swing for creating an interactive and user-friendly desktop application.</li>
+            <li>Server address: gmsahimsa.com</li>
+            <li>API Endpoint: api.gmsahimsa.com</li>
+            <li>Server Location: United States of America, California</li>
+            <li>SSL Certificate: Issued by Google Trust Services LLC, expires on May 24, 2024 (auto-renews).</li>
         </ul>
+    </section>
+
+    <section>
+        <h2>Self-Hosting Instructions</h2>
+        <ol>
+            <li>For self-hosting, upload the PHP files (dbconnect.php, api.php, and preview.php) to your server.</li>
+            <li>Import the provided SQL file into your database to set up the necessary tables.</li>
+            <li>Adjust the API_BASE_URL in the Java source file to point to your new server location.</li>
+        </ol>
     </section>
 
     <section>
@@ -142,6 +148,25 @@
             <li>RAM: At least 2GB</li>
             <li>Disk Space: At least 200MB of free space</li>
             <li>Java Runtime Environment (JRE): 11 or higher</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Project Structure</h2>
+        <ul>
+            <li>📦 APIClient.java: Manages API communications</li>
+            <li>🖼️ ImagePreviewer.java: Handles image preview functions</li>
+            <li>📝 CertificateCreationScreen.java: Interface for certificate customization</li>
+            <li>🗂️ PathSelectionScreen.java: Directory selection for saving certificates</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Key Features</h2>
+        <ul>
+            <li>⚙️ OOP Concepts: Classes, objects, inheritance, and polymorphism</li>
+            <li>🌐 API Integration: Seamless PHP backend integration</li>
+            <li>🖥️ Swing GUI: User-friendly Java Swing interface</li>
         </ul>
     </section>
 
@@ -157,9 +182,7 @@
     </section>
 
     <section class="stats">
-        <h2>Github Info</h2>
         <img src="https://github-readme-stats.vercel.app/api?username=a3h1m4sa&show_icons=true&locale=en&theme=dark" alt="GitHub Stats">
-        <p>All of my projects are available at <a href="https://github.com/A3H1M4SA">my GitHub</a>.</p>
     </section>
 
     <footer>

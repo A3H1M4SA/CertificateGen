@@ -9,13 +9,23 @@
 <h3 align="left">Project Overview:</h3>
 <p align="left">This University Project showcases an integration between Java and PHP, focusing on creating a scalable certificate generator application. Utilizing OOP principles, the project emphasizes modularity, reusability, and maintainability in software development.</p>
 
-<h3 align="left">Project Structure:</h3>
+<h3 align="left">Public API Endpoint:</h3>
+<p align="left">
+  <br> API ENDPOINT (https://api.gmsahimsa.com/)<br>
+  <br>-IP: 199.85.209.17<br>
+  <br>-Location: New York, USA<br>
+  <br>-API SSL Certificate: Issued by Google Trust Services LLC<br>
+  <br>-SSL Certificate Expiry: Monday, July 22, 2024 at 12:24:16 PM (Auto Renews)<br>
+</p>
+
+<h3 align="left"> Project Structure:</h3>
 <p align="left">
 - 📦 <b>APIClient.java</b>: Handles all API communications, encapsulating HTTP requests and responses.<br>
 - 🖼️ <b>ImagePreviewer.java</b>: Manages image loading and display, offering functionality to preview images from URLs or file paths.<br>
 - 📝 <b>CertificateCreationScreen.java</b>: Provides the UI for certificate customization, integrating components for user input and image preview.<br>
 - 🗂️ <b>PathSelectionScreen.java</b>: Allows users to select a directory for saving the generated certificates.<br>
 </p>
+
 
 <h3 align="left">Key Features:</h3>
 <p align="left">

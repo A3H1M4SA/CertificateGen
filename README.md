@@ -1,4 +1,4 @@
-<h1 align="center">Hi 👋, I'm Ahimsa GMS</h1>
+<h1 align="center">Hi There 👋</h1>
 <h3 align="center">University Project (Anglia Ruskin) - Java and PHP Integration</h3>
 
 <p align="left"> <img src="https://komarev.com/ghpvc/?username=a3h1m4sa&label=Profile%20views&color=0e75b6&style=flat" alt="a3h1m4sa" /> </p>
